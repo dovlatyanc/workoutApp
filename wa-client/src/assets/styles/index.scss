@@ -1,4 +1,4 @@
-@import './variables';
+@use 'variables';
 
 * {
 	margin: 0;
@@ -42,7 +42,7 @@ body {
 }
 
 body {
-	background-color: $black;
+	background-color: variables.$black;
 	padding: 0;
 	margin: 0;
 	color: #fff;
@@ -50,7 +50,7 @@ body {
 	min-width: 320px;
 	position: relative;
 	line-height: 1.65;
-	font-family: $default-font;
+	font-family: variables.$default-font;
 	overflow-x: hidden;
 }
 
