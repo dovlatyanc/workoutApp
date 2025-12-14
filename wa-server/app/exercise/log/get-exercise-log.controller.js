@@ -13,7 +13,7 @@ export const getExerciseLog = asyncHandler(async (req, res) => {
 			id: +req.params.id
 		},
 		include: {
-			exercise: true,
+			Exercise: true,
 			times: {
 				orderBy: {
 					id: 'asc'
@@ -26,6 +26,15 @@ export const getExerciseLog = asyncHandler(async (req, res) => {
 		res.status(404)
 		throw new Error('Exercise Log not found!')
 	}
+
+	  // ДОБАВЬТЕ ОТЛАДКУ:
+  console.log('DEBUG - ExerciseLog data:', {
+    id: exerciseLog.id,
+    hasExerciseArray: !!exerciseLog.Exercise,
+    exerciseCount: exerciseLog.Exercise?.length || 0,
+    firstExerciseName: exerciseLog.Exercise?.[0]?.name || 'NO NAME',
+    firstExerciseData: exerciseLog.Exercise?.[0]
+  })
 
 	const prevExerciseLog = await prisma.exerciseLog.findFirst({
 		where: {

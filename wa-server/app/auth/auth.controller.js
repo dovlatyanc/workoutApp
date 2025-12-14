@@ -13,20 +13,60 @@ import { generateToken } from './generate-token.js'
 export const authUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body
 
-	const user = await prisma.user.findUnique({
-		where: {
-			email
+	console.log('Login attempt for email:', email)
+
+	try {
+		const user = await prisma.user.findUnique({
+			where: { email }
+		})
+
+		console.log('User found:', !!user)
+
+		// Проверяем что пользователь найден
+		if (!user) {
+			console.log('User not found')
+			return res.status(401).json({ error: 'Email and password are not correct' })
 		}
-	})
 
-	const isValidPassword = await verify(user.password, password)
+		console.log('Verifying password...')
 
-	if (user && isValidPassword) {
+		// Проверяем пароль
+		const isValidPassword = await verify(user.password, password)
+		
+		console.log('Password valid:', isValidPassword)
+
+		if (!isValidPassword) {
+			console.log('Invalid password')
+			return res.status(401).json({ error: 'Email and password are not correct' })
+		}
+
+		// Генерируем токен
 		const token = generateToken(user.id)
-		res.json({ user, token })
-	} else {
-		res.status(401)
-		throw new Error('Email and password are not correct')
+		console.log('Token generated for user:', user.id)
+
+		// Возвращаем данные (без пароля)
+		const userResponse = {
+			id: user.id,
+			email: user.email,
+			name: user.name,
+			images: user.images
+			// Не включаем password!
+		}
+
+		res.json({ 
+			user: userResponse, 
+			token 
+		})
+
+		console.log('Login successful')
+
+	} catch (error) {
+		console.error('Login error:', error)
+		console.error('Error stack:', error.stack)
+		res.status(500).json({ 
+			error: 'Server error',
+			details: error.message 
+		})
 	}
 })
 

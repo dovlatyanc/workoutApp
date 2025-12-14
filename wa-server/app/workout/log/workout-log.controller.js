@@ -42,7 +42,7 @@ export const createNewWorkoutLog = asyncHandler(async (req, res) => {
 							id: req.user.id
 						}
 					},
-					exercise: {
+					Exercise: {
 						connect: {
 							id: exercise.id
 						}
